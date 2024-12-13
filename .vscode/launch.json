@@ -11,7 +11,8 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "${workspaceFolder}/demo"
+        // "${workspaceFolder}/demo"
+        "/Users/lioneltay/persuit/http-server"
       ],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "preLaunchTask": "${defaultBuildTask}"

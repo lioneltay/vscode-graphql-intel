@@ -20,6 +20,10 @@
       {
         "command": "graphql-lens.createGraphQLType",
         "title": "Create GraphQL Type"
+      },
+      {
+        "command": "graphql-lens.findGraphQLResolver",
+        "title": "Find GraphQL Resolver"
       }
     ]
   },

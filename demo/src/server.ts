@@ -3,7 +3,7 @@ import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from "@apollo/server/express4"
 import cors from "cors"
 
-import { resolvers } from "./resolvers"
+import { resolvers } from "./graphql/resolvers"
 import * as fs from "fs"
 import * as path from "path"
 import * as glob from "glob"
@@ -35,9 +35,7 @@ async function startServer() {
   )
 
   app.listen({ port: 4000 }, () =>
-    console.log(
-      `🚀 Server ready at http://localhost:4000/graphql`,
-    ),
+    console.log(`🚀 Server ready at http://localhost:4000/graphql`),
   )
 }
 
