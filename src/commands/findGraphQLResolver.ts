@@ -25,20 +25,42 @@ const extractQueryNames = (schema: string): string[] => {
   return queryNames
 }
 
-// Function to find all queries in .gql files
-async function findAllQueries(): Promise<{ [filePath: string]: string[] }> {
+// Function to extract all mutation names from a GraphQL schema
+const extractMutationNames = (schema: string): string[] => {
+  const mutationRegex = /(type|extend type)\s+Mutation\s*{([^}]*)}/g
+  const mutationNames: string[] = []
+  let match
+
+  while ((match = mutationRegex.exec(schema)) !== null) {
+    const mutationBlock = match[2]
+    const blockMutationNames = [
+      ...mutationBlock.matchAll(/^\s*(\w+)\s*\(/gm),
+    ].map((m) => m[1])
+    mutationNames.push(...blockMutationNames)
+  }
+
+  return mutationNames
+}
+
+// Function to find all queries and mutations in .gql files
+async function findAllResolvers(): Promise<{
+  [filePath: string]: { queries: string[]; mutations: string[] }
+}> {
   const gqlFiles = await findAllGqlFiles()
-  const queries: { [filePath: string]: string[] } = {}
+  const resolvers: {
+    [filePath: string]: { queries: string[]; mutations: string[] }
+  } = {}
 
   for (const file of gqlFiles) {
     const content = await fs.promises.readFile(file.fsPath, "utf8")
     const queryNames = extractQueryNames(content)
-    if (queryNames.length > 0) {
-      queries[file.fsPath] = queryNames
+    const mutationNames = extractMutationNames(content)
+    if (queryNames.length > 0 || mutationNames.length > 0) {
+      resolvers[file.fsPath] = { queries: queryNames, mutations: mutationNames }
     }
   }
 
-  return queries
+  return resolvers
 }
 
 function getResolversFolder(): string {
@@ -120,11 +142,30 @@ export function registerFindGraphQLResolverCommand(
   const findGraphQLResolverCommand = vscode.commands.registerCommand(
     "graphql-lens.findGraphQLResolver",
     async () => {
-      const allQueries = await findAllQueries()
-      const queryNames = Object.values(allQueries).flat()
+      const allResolvers = await findAllResolvers()
+      const queryNames = Object.values(allResolvers).flatMap(
+        (resolver) => resolver.queries,
+      )
+      const mutationNames = Object.values(allResolvers).flatMap(
+        (resolver) => resolver.mutations,
+      )
 
-      const resolverName = await vscode.window.showQuickPick(queryNames, {
-        placeHolder: "Select the GraphQL resolver name",
+      const resolverType = await vscode.window.showQuickPick(
+        ["Query", "Mutation"],
+        {
+          placeHolder: "Select the GraphQL resolver type",
+        },
+      )
+
+      if (!resolverType) {
+        return
+      }
+
+      const resolverNames =
+        resolverType === "Query" ? queryNames : mutationNames
+
+      const resolverName = await vscode.window.showQuickPick(resolverNames, {
+        placeHolder: `Select the GraphQL ${resolverType.toLowerCase()} name`,
       })
 
       if (!resolverName) {
