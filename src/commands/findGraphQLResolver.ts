@@ -2,44 +2,26 @@ import * as vscode from "vscode"
 import * as path from "path"
 import * as fs from "fs"
 
-// Function to find all .gql files in the codebase
-async function findAllGqlFiles(): Promise<vscode.Uri[]> {
-  const gqlFiles = await vscode.workspace.findFiles("**/*.gql")
-  return gqlFiles
-}
+import { findAllGqlFiles, getGraphqlFolder } from "../utils"
 
-// Function to extract all query names from a GraphQL schema
-const extractQueryNames = (schema: string): string[] => {
-  const queryRegex = /(type|extend type)\s+Query\s*{([^}]*)}/g
-  const queryNames: string[] = []
+// Function to extract all resolver names from a GraphQL schema
+const extractResolverNames = (
+  schema: string,
+  type: "Query" | "Mutation",
+): string[] => {
+  const regex = new RegExp(`(type|extend type)\\s+${type}\\s*{([^}]*)}`, "g")
+  const resolverNames: string[] = []
   let match
 
-  while ((match = queryRegex.exec(schema)) !== null) {
-    const queryBlock = match[2]
-    const blockQueryNames = [...queryBlock.matchAll(/^\s*(\w+)\s*\(/gm)].map(
+  while ((match = regex.exec(schema)) !== null) {
+    const block = match[2]
+    const blockResolverNames = [...block.matchAll(/^\s*(\w+)\s*\(/gm)].map(
       (m) => m[1],
     )
-    queryNames.push(...blockQueryNames)
+    resolverNames.push(...blockResolverNames)
   }
 
-  return queryNames
-}
-
-// Function to extract all mutation names from a GraphQL schema
-const extractMutationNames = (schema: string): string[] => {
-  const mutationRegex = /(type|extend type)\s+Mutation\s*{([^}]*)}/g
-  const mutationNames: string[] = []
-  let match
-
-  while ((match = mutationRegex.exec(schema)) !== null) {
-    const mutationBlock = match[2]
-    const blockMutationNames = [
-      ...mutationBlock.matchAll(/^\s*(\w+)\s*\(/gm),
-    ].map((m) => m[1])
-    mutationNames.push(...blockMutationNames)
-  }
-
-  return mutationNames
+  return resolverNames
 }
 
 // Function to find all queries and mutations in .gql files
@@ -53,8 +35,8 @@ async function findAllResolvers(): Promise<{
 
   for (const file of gqlFiles) {
     const content = await fs.promises.readFile(file.fsPath, "utf8")
-    const queryNames = extractQueryNames(content)
-    const mutationNames = extractMutationNames(content)
+    const queryNames = extractResolverNames(content, "Query")
+    const mutationNames = extractResolverNames(content, "Mutation")
     if (queryNames.length > 0 || mutationNames.length > 0) {
       resolvers[file.fsPath] = { queries: queryNames, mutations: mutationNames }
     }
@@ -63,34 +45,17 @@ async function findAllResolvers(): Promise<{
   return resolvers
 }
 
-function getResolversFolder(): string {
-  const workspaceFolders = vscode.workspace.workspaceFolders
-  if (!workspaceFolders) {
-    throw new Error("No workspace folder is open.")
-  }
-
-  const configPath = path.join(
-    workspaceFolders[0].uri.fsPath,
-    "graphql-lens.config.json",
-  )
-  if (fs.existsSync(configPath)) {
-    const config = JSON.parse(fs.readFileSync(configPath, "utf8"))
-    return config.resolversFolder || "src/graphql/resolvers"
-  }
-
-  return "src/graphql/resolvers"
-}
-
 // Function to search for the resolver in the resolvers folder
 async function searchResolverInFolder(
-  folderPath: string,
+  baseType: string, // "Query" | "Mutation"
   resolverName: string,
 ): Promise<{ filePath: string; position: number; endIndex: number } | null> {
+  const folderPath = getGraphqlFolder()
   const files = await vscode.workspace.findFiles(`${folderPath}/**/*.{ts,js}`)
   for (const file of files) {
     const content = await fs.promises.readFile(file.fsPath, "utf8")
     const regex = new RegExp(
-      `Query\\s*:\\s*{[\\s\\S]*?\\b${resolverName}\\b[\\s\\S]*?}`,
+      `${baseType}\\s*:\\s*{[\\s\\S]*?\\b${resolverName}\\b[\\s\\S]*?}`,
       "s",
     )
     const match = regex.exec(content)
@@ -172,10 +137,7 @@ export function registerFindGraphQLResolverCommand(
         return
       }
 
-      const result = await searchResolverInFolder(
-        getResolversFolder(),
-        resolverName,
-      )
+      const result = await searchResolverInFolder(resolverType, resolverName)
       if (result) {
         await showResolverInEditor(result, resolverName)
       } else {
