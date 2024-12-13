@@ -1,0 +1,21 @@
+type Product {
+  id: ID!
+  name: String!
+  price: Float!
+  description: String
+  orders: [Order!]!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  orders: [Order!]!
+}
+
+type Order {
+  id: ID!
+  product: Product!
+  user: User!
+  quantity: Int!
+}

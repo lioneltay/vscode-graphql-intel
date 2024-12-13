@@ -1,0 +1,5 @@
+type Mutation {
+  addProduct(name: String!, price: Float!, description: String): Product!
+  addUser(name: String!, email: String!): User!
+  addOrder(productId: ID!, userId: ID!, quantity: Int!): Order!
+}
