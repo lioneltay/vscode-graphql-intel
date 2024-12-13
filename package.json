@@ -14,20 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "graphql-lens.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "graphql-lens.showList",
-        "title": "Show List"
-      },
-      {
-        "command": "graphql-lens.showWebview",
-        "title": "Show Webview"
-      },
-      {
         "command": "graphql-lens.openGraphQLType",
         "title": "Open GraphQL Type"
+      },
+      {
+        "command": "graphql-lens.createGraphQLType",
+        "title": "Create GraphQL Type"
       }
     ]
   },
@@ -44,19 +36,20 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@types/vscode": "^1.95.0",
     "@types/mocha": "^10.0.9",
-    "@types/node": "20.x",
-    "@typescript-eslint/eslint-plugin": "^8.10.0",
-    "@typescript-eslint/parser": "^8.7.0",
-    "eslint": "^9.13.0",
-    "typescript": "^5.6.3",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.95.0",
-    "webpack-cli": "^5.1.4",
+    "@types/node": "^20.8.3",
+    "@types/vscode": "^1.78.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
-    "prettier": "^2.4.1"
+    "eslint": "^8.50.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.0.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   },
   "packageManager": "pnpm@8.6.0+sha512.b8c69619796f1be9b934825a47824411e9c285b83ed403f8cd5a6ab383c4719838b87fa55cc4ddfd7fe58ab29903e4c2d30d1dfbefb2ddbb4835cc322acbb000"
 }
