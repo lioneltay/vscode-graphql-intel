@@ -1,14 +1,10 @@
 import * as vscode from "vscode"
-import * as path from "path"
 import * as fs from "fs"
 
 import { findAllGqlFiles, getGraphqlFolder } from "../utils"
 
 // Function to extract all resolver names from a GraphQL schema
-const extractResolverNames = (
-  schema: string,
-  type: "Query" | "Mutation",
-): string[] => {
+const extractResolverNames = (schema: string, type: string): string[] => {
   const regex = new RegExp(`(type|extend type)\\s+${type}\\s*{([^}]*)}`, "g")
   const resolverNames: string[] = []
   let match
@@ -24,22 +20,15 @@ const extractResolverNames = (
   return resolverNames
 }
 
-// Function to find all queries and mutations in .gql files
-async function findAllResolvers(): Promise<{
-  [filePath: string]: { queries: string[]; mutations: string[] }
-}> {
+// Function to find all resolvers of a specified type in .gql files
+async function findAllResolvers(type: string): Promise<string[]> {
   const gqlFiles = await findAllGqlFiles()
-  const resolvers: {
-    [filePath: string]: { queries: string[]; mutations: string[] }
-  } = {}
+  const resolvers: string[] = []
 
   for (const file of gqlFiles) {
     const content = await fs.promises.readFile(file.fsPath, "utf8")
-    const queryNames = extractResolverNames(content, "Query")
-    const mutationNames = extractResolverNames(content, "Mutation")
-    if (queryNames.length > 0 || mutationNames.length > 0) {
-      resolvers[file.fsPath] = { queries: queryNames, mutations: mutationNames }
-    }
+    const resolverNames = extractResolverNames(content, type)
+    resolvers.push(...resolverNames)
   }
 
   return resolvers
@@ -107,14 +96,6 @@ export function registerFindGraphQLResolverCommand(
   const findGraphQLResolverCommand = vscode.commands.registerCommand(
     "graphql-lens.findGraphQLResolver",
     async () => {
-      const allResolvers = await findAllResolvers()
-      const queryNames = Object.values(allResolvers).flatMap(
-        (resolver) => resolver.queries,
-      )
-      const mutationNames = Object.values(allResolvers).flatMap(
-        (resolver) => resolver.mutations,
-      )
-
       const resolverType = await vscode.window.showQuickPick(
         ["Query", "Mutation"],
         {
@@ -126,8 +107,7 @@ export function registerFindGraphQLResolverCommand(
         return
       }
 
-      const resolverNames =
-        resolverType === "Query" ? queryNames : mutationNames
+      const resolverNames = await findAllResolvers(resolverType)
 
       const resolverName = await vscode.window.showQuickPick(resolverNames, {
         placeHolder: `Select the GraphQL ${resolverType.toLowerCase()} name`,
