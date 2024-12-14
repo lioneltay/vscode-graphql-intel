@@ -1,4 +1,4 @@
-import { resolver as cow } from "./addProduct-resx"
+import { resolver as cow } from "./addProduct"
 
 export const resolvers = {
   Query: {},
