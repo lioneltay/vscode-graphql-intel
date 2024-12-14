@@ -66,9 +66,17 @@ export function registerFindGraphQLFieldCommand(
   const findGraphQLFieldCommand = vscode.commands.registerCommand(
     "graphql-intel.findGraphQLField",
     async () => {
-      const typeName = await vscode.window.showQuickPick(getTypeNames(), {
-        placeHolder: "Select a GraphQL type",
-      })
+      const allTypes = await getTypeNames()
+      const topLevelTypes = ["Query", "Mutation", "Subscription"]
+      const typeName = await vscode.window.showQuickPick(
+        [
+          ...topLevelTypes,
+          ...allTypes.filter((t) => !topLevelTypes.includes(t)).sort(),
+        ],
+        {
+          placeHolder: "Select a GraphQL type",
+        },
+      )
 
       if (!typeName) {
         return

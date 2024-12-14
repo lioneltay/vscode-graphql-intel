@@ -51,9 +51,10 @@ export function extractFieldNamesFromSchema(
 
   while ((match = regex.exec(schema)) !== null) {
     const block = match[2]
-    const blockResolverNames = [...block.matchAll(/^\s*(\w+)\s*[:(]/gm)].map(
-      (m) => m[1],
-    )
+    // const blockResolverNames = [...block.matchAll(/^\s*(\w+)\s*[:(]/gm)].map(
+    const blockResolverNames = [
+      ...block.matchAll(/^( {2}|\t)?(\w+)\s*[:(]/gm),
+    ].map((m) => m[2])
     resolverNames.push(...blockResolverNames)
   }
 
