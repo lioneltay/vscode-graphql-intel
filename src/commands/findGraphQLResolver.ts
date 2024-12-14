@@ -1,38 +1,7 @@
 import * as vscode from "vscode"
 import * as fs from "fs"
 
-import { findAllGqlFiles, getGraphqlFolder } from "../utils"
-
-// Function to extract all resolver names from a GraphQL schema
-const extractResolverNames = (schema: string, type: string): string[] => {
-  const regex = new RegExp(`(type|extend type)\\s+${type}\\s*{([^}]*)}`, "g")
-  const resolverNames: string[] = []
-  let match
-
-  while ((match = regex.exec(schema)) !== null) {
-    const block = match[2]
-    const blockResolverNames = [...block.matchAll(/^\s*(\w+)\s*\(/gm)].map(
-      (m) => m[1],
-    )
-    resolverNames.push(...blockResolverNames)
-  }
-
-  return resolverNames
-}
-
-// Function to find all resolvers of a specified type in .gql files
-async function findAllResolvers(type: string): Promise<string[]> {
-  const gqlFiles = await findAllGqlFiles()
-  const resolvers: string[] = []
-
-  for (const file of gqlFiles) {
-    const content = await fs.promises.readFile(file.fsPath, "utf8")
-    const resolverNames = extractResolverNames(content, type)
-    resolvers.push(...resolverNames)
-  }
-
-  return resolvers
-}
+import { getGraphqlFolder, getAllFieldsOfType } from "../utils"
 
 // Function to search for the resolver in the resolvers folder
 async function searchResolverInFolder(
@@ -97,7 +66,7 @@ export function registerFindGraphQLResolverCommand(
     "graphql-lens.findGraphQLResolver",
     async () => {
       const resolverType = await vscode.window.showQuickPick(
-        ["Query", "Mutation"],
+        ["Query", "Mutation", "Type"],
         {
           placeHolder: "Select the GraphQL resolver type",
         },
@@ -107,7 +76,16 @@ export function registerFindGraphQLResolverCommand(
         return
       }
 
-      const resolverNames = await findAllResolvers(resolverType)
+      if (resolverNames === "Type") {
+        const resolverType = await vscode.window.showQuickPick(
+          ["Query", "Mutation", "Type"],
+          {
+            placeHolder: "Select the GraphQL resolver type",
+          },
+        )
+      }
+
+      const resolverNames = await getAllFieldsOfType(resolverType)
 
       const resolverName = await vscode.window.showQuickPick(resolverNames, {
         placeHolder: `Select the GraphQL ${resolverType.toLowerCase()} name`,
