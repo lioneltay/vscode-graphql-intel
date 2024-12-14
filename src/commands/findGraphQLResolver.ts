@@ -15,7 +15,7 @@ async function searchResolverInFolder(
   return searchInFiles(
     `${getGraphqlFolder()}/**/*.{ts,js}`,
     new RegExp(
-      `${baseType}\\s*:\\s*{[\\s\\S]*?\\b${fieldName}\\b\\s*(?:\\:|,)`,
+      `${baseType}\\s*:\\s*{[\\s\\S]*?\\b(?:async\\s+)?${fieldName}\\b\\s*(?:\\(|\\:|,)`,
       "s",
     ),
   )
