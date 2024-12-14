@@ -29,6 +29,7 @@
     ]
   },
   "scripts": {
+    "publish-extension": "vsce publish patch --no-dependencies",
     "vscode:prepublish": "pnpm run package",
     "compile": "webpack",
     "watch": "webpack --watch",
