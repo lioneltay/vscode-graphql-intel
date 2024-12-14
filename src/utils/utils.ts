@@ -40,20 +40,29 @@ export function readConfig<T>(field: string, defaultValue: T): T {
     )
 }
 
+function getTabSize() {
+  return readConfig(
+    "tabSize",
+    vscode.workspace.getConfiguration("editor").get("tabSize") ?? 2,
+  )
+}
+
 // Extract all fieldNames from a type in the schema
 export function extractFieldNamesFromSchema(
   schema: string,
   type: string,
 ): string[] {
+  const tabSize = getTabSize()
   const regex = new RegExp(`(type|extend type)\\s+${type}\\s*{([^}]*)}`, "g")
   const resolverNames: string[] = []
   let match
 
   while ((match = regex.exec(schema)) !== null) {
     const block = match[2]
-    // const blockResolverNames = [...block.matchAll(/^\s*(\w+)\s*[:(]/gm)].map(
     const blockResolverNames = [
-      ...block.matchAll(/^( {2}|\t)?(\w+)\s*[:(]/gm),
+      ...block.matchAll(
+        new RegExp(`^( {${tabSize}}|\\t)?(\\w+)\\s*[:(]`, "gm"),
+      ),
     ].map((m) => m[2])
     resolverNames.push(...blockResolverNames)
   }
