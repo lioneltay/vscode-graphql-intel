@@ -13,7 +13,7 @@ GraphQL Intel is a Visual Studio Code extension that helps you navigate and find
 
 ### Commands
 
-<img src="media/commands.png" alt="Commands" width="600"/>
+<img src="https://raw.githubusercontent.com/lioneltay/vscode-graphql-intel/refs/heads/main/media/commands.png" alt="Commands" width="600"/>
 
 #### Find GraphQL Type
 
