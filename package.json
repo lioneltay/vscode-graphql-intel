@@ -1,5 +1,6 @@
 {
   "name": "graphql-intel",
+  "publisher": "lionel-tay",
   "displayName": "graphql-intel",
   "description": "Normalize your GraphQL files and make editing a breeze",
   "version": "0.0.1",
@@ -20,6 +21,10 @@
       {
         "command": "graphql-intel.findGraphQLResolver",
         "title": "Find GraphQL Resolver"
+      },
+      {
+        "command": "graphql-intel.findGraphQLField",
+        "title": "Find GraphQL Field"
       }
     ]
   },
