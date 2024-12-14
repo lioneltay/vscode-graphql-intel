@@ -67,7 +67,7 @@ export function extractFieldNamesFromSchema(
     resolverNames.push(...blockResolverNames)
   }
 
-  return resolverNames
+  return resolverNames.sort()
 }
 
 // Get all fields of a type in the schema
@@ -81,5 +81,5 @@ export async function getAllFieldsOfType(type: string): Promise<string[]> {
     resolvers.push(...resolverNames)
   }
 
-  return resolvers
+  return resolvers.sort()
 }

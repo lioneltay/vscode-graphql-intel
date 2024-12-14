@@ -16,7 +16,7 @@ async function initializeCache() {
   await Promise.all(
     files.map(async (file) => {
       const content = await fs.promises.readFile(file.fsPath, "utf8")
-      const regex = /type\s+(\w+)\s+{/g
+      const regex = /^type\s+(\w+)\s+{/g
       let match
       while ((match = regex.exec(content)) !== null) {
         if (!typeCache[file.fsPath]) {
@@ -33,7 +33,7 @@ async function initializeCache() {
 // Function to update the cache for a specific file
 async function updateCache(filePath: string) {
   const content = await fs.promises.readFile(filePath, "utf8")
-  const regex = /type\s+(\w+)\s+{/g
+  const regex = /^type\s+(\w+)\s+{/g
   let match
   typeCache[filePath] = new Set<string>()
   while ((match = regex.exec(content)) !== null) {
@@ -50,7 +50,7 @@ export async function getTypeNames(): Promise<string[]> {
   for (const types of Object.values(typeCache)) {
     types.forEach((type) => typeNames.add(type))
   }
-  return Array.from(typeNames)
+  return Array.from(typeNames).sort()
 }
 
 export async function findFileWithType(
