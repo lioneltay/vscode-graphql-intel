@@ -1,5 +1,3 @@
 {
-  "schemaFolder": "src/graphql",
-  "rootResolverFile": "src/graphql/resolvers.ts",
-  "resolversFolder": "src/server/graphql/resolvers"
+  "graphqlFolder": "src"
 }

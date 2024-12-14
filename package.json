@@ -14,12 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "graphql-lens.openGraphQLType",
-        "title": "Open GraphQL Type"
-      },
-      {
-        "command": "graphql-lens.createGraphQLType",
-        "title": "Create GraphQL Type"
+        "command": "graphql-lens.findGraphQLType",
+        "title": "Find GraphQL Type"
       },
       {
         "command": "graphql-lens.findGraphQLResolver",
