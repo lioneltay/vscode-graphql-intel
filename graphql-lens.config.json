@@ -1,4 +1,4 @@
 {
-  "graphqlFolder": "src",
+  "graphqlFolder": "src/",
   "tabSize": 2
 }

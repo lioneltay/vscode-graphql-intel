@@ -15,10 +15,10 @@ export function getGraphqlFolder(): string {
     throw new Error("No workspace folder is open.")
   }
 
-  return readConfig("graphqlFolder", "src/graphql/resolvers")
+  return readConfig("graphqlFolder", "src/")
 }
 
-export function readConfig<T>(field: string, defaultValue: T): T {
+function readConfig<T>(field: string, defaultValue: T): T {
   const workspaceFolders = vscode.workspace.workspaceFolders
   if (!workspaceFolders) {
     throw new Error("No workspace folder is open.")
