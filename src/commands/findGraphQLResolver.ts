@@ -1,19 +1,19 @@
 import * as vscode from "vscode"
 import * as fs from "fs"
 
-import { getGraphqlFolder, getAllFieldsOfType } from "../utils"
+import { getGraphqlFolder, getAllFieldsOfType, getTypeNames } from "../utils"
 
 // Function to search for the resolver in the resolvers folder
 async function searchResolverInFolder(
-  baseType: string, // "Query" | "Mutation"
-  resolverName: string,
+  baseType: string,
+  fieldName: string,
 ): Promise<{ filePath: string; position: number; endIndex: number } | null> {
   const folderPath = getGraphqlFolder()
   const files = await vscode.workspace.findFiles(`${folderPath}/**/*.{ts,js}`)
   for (const file of files) {
     const content = await fs.promises.readFile(file.fsPath, "utf8")
     const regex = new RegExp(
-      `${baseType}\\s*:\\s*{[\\s\\S]*?\\b${resolverName}\\b[\\s\\S]*?}`,
+      `${baseType}\\s*:\\s*{[\\s\\S]*?\\b${fieldName}\\b\\s*(?:\\:|,)`,
       "s",
     )
     const match = regex.exec(content)
@@ -76,26 +76,30 @@ export function registerFindGraphQLResolverCommand(
         return
       }
 
-      if (resolverNames === "Type") {
-        const resolverType = await vscode.window.showQuickPick(
-          ["Query", "Mutation", "Type"],
-          {
-            placeHolder: "Select the GraphQL resolver type",
-          },
-        )
+      const finalType =
+        resolverType === "Type"
+          ? await vscode.window.showQuickPick(getTypeNames(), {
+              placeHolder: "Select a GraphQL type",
+            })
+          : resolverType
+
+      if (!finalType) {
+        return
       }
 
-      const resolverNames = await getAllFieldsOfType(resolverType)
+      const typeFields = await getAllFieldsOfType(finalType)
 
-      const resolverName = await vscode.window.showQuickPick(resolverNames, {
-        placeHolder: `Select the GraphQL ${resolverType.toLowerCase()} name`,
+      console.log("typefields", typeFields)
+
+      const resolverName = await vscode.window.showQuickPick(typeFields, {
+        placeHolder: `Select the GraphQL ${finalType} name`,
       })
 
       if (!resolverName) {
         return
       }
 
-      const result = await searchResolverInFolder(resolverType, resolverName)
+      const result = await searchResolverInFolder(finalType, resolverName)
       if (result) {
         await showResolverInEditor(result, resolverName)
       } else {

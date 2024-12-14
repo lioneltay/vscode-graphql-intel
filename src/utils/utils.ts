@@ -41,14 +41,17 @@ export function readConfig<T>(field: string, defaultValue: T): T {
 }
 
 // Extract all fieldNames from a type in the schema
-export function extractResolverNames(schema: string, type: string): string[] {
+export function extractFieldNamesFromSchema(
+  schema: string,
+  type: string,
+): string[] {
   const regex = new RegExp(`(type|extend type)\\s+${type}\\s*{([^}]*)}`, "g")
   const resolverNames: string[] = []
   let match
 
   while ((match = regex.exec(schema)) !== null) {
     const block = match[2]
-    const blockResolverNames = [...block.matchAll(/^\s*(\w+)\s*\(/gm)].map(
+    const blockResolverNames = [...block.matchAll(/^\s*(\w+)\s*[:(]/gm)].map(
       (m) => m[1],
     )
     resolverNames.push(...blockResolverNames)
@@ -64,7 +67,7 @@ export async function getAllFieldsOfType(type: string): Promise<string[]> {
 
   for (const file of gqlFiles) {
     const content = await fs.promises.readFile(file.fsPath, "utf8")
-    const resolverNames = extractResolverNames(content, type)
+    const resolverNames = extractFieldNamesFromSchema(content, type)
     resolvers.push(...resolverNames)
   }
 
