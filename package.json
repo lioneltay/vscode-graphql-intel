@@ -1,8 +1,9 @@
 {
   "name": "graphql-intel",
   "publisher": "LionelTay",
-  "displayName": "graphql-intel",
-  "description": "Normalize your GraphQL files and make editing a breeze",
+  "displayName": "GraphQL Intel",
+  "description": "Find GraphQL files with ease",
+  "icon": "graphql-intel.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/lioneltay/vscode-graphql-intel"

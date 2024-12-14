@@ -1,6 +1,6 @@
 # graphql-intel README
 
-Tools for navitagint GraphQL files.
+Tools for navigating GraphQL files.
 
 ## Features
 
