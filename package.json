@@ -3,7 +3,7 @@
   "publisher": "LionelTay",
   "displayName": "GraphQL Intel",
   "description": "Find GraphQL files with ease",
-  "icon": "graphql-intel.png",
+  "icon": "https://raw.githubusercontent.com/lioneltay/vscode-graphql-intel/refs/heads/main/media/graphql-intel.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/lioneltay/vscode-graphql-intel"
