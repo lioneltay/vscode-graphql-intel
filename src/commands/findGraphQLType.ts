@@ -12,7 +12,7 @@ export function registerOpenGraphQLTypeCommand(
   context: vscode.ExtensionContext,
 ) {
   const openGraphQLTypeCommand = vscode.commands.registerCommand(
-    "graphql-lens.findGraphQLType",
+    "graphql-intel.findGraphQLType",
     async () => {
       // Get all type names for the quick pick dropdown
       const typeNames = await getTypeNames()

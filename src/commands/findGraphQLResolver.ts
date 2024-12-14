@@ -63,7 +63,7 @@ export function registerFindGraphQLResolverCommand(
   context: vscode.ExtensionContext,
 ) {
   const findGraphQLResolverCommand = vscode.commands.registerCommand(
-    "graphql-lens.findGraphQLResolver",
+    "graphql-intel.findGraphQLResolver",
     async () => {
       const resolverType = await vscode.window.showQuickPick(
         ["Query", "Mutation", "Type"],

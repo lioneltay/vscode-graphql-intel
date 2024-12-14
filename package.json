@@ -1,6 +1,6 @@
 {
-  "name": "graphql-lens",
-  "displayName": "graphql-lens",
+  "name": "graphql-intel",
+  "displayName": "graphql-intel",
   "description": "Normalize your GraphQL files and make editing a breeze",
   "version": "0.0.1",
   "engines": {
@@ -14,11 +14,11 @@
   "contributes": {
     "commands": [
       {
-        "command": "graphql-lens.findGraphQLType",
+        "command": "graphql-intel.findGraphQLType",
         "title": "Find GraphQL Type"
       },
       {
-        "command": "graphql-lens.findGraphQLResolver",
+        "command": "graphql-intel.findGraphQLResolver",
         "title": "Find GraphQL Resolver"
       }
     ]

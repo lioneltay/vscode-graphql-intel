@@ -26,7 +26,7 @@ export function readConfig<T>(field: string, defaultValue: T): T {
 
   const configPath = path.join(
     workspaceFolders[0].uri.fsPath,
-    "graphql-lens.config.json",
+    "graphql-intel.config.json",
   )
 
   if (!fs.existsSync(configPath)) return defaultValue
