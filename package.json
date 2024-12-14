@@ -3,6 +3,10 @@
   "publisher": "lionel-tay",
   "displayName": "graphql-intel",
   "description": "Normalize your GraphQL files and make editing a breeze",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lioneltay/vscode-graphql-intel"
+  },
   "version": "0.0.3",
   "engines": {
     "vscode": "^1.95.0"
