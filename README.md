@@ -11,7 +11,11 @@ GraphQL Intel is a Visual Studio Code extension that helps you navigate and find
 
 ## Usage
 
-### Find GraphQL Type
+### Commands
+
+<img src="media/commands.png" alt="Commands" width="600"/>
+
+#### Find GraphQL Type
 
 Locates and opens the file that contains the definition of a particular GraphQL type.
 
@@ -20,7 +24,7 @@ Locates and opens the file that contains the definition of a particular GraphQL 
 3. Enter the name of the GraphQL type you want to find.
 4. The extension will locate and open the file that contains the definition of the specified type.
 
-### Find GraphQL Field
+#### Find GraphQL Field
 
 Locates and opens the file that contains the definition of a particular field of a GraphQL type.
 
@@ -30,7 +34,7 @@ Locates and opens the file that contains the definition of a particular field of
 4. Select the field name for the selected type.
 5. The extension will locate and open the file that contains the definition of the specified field.
 
-### Find GraphQL Resolver
+#### Find GraphQL Resolver
 
 Locates and opens the file that contains the definition of a resolver.
 
