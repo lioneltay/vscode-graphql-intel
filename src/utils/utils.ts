@@ -83,3 +83,23 @@ export async function getAllFieldsOfType(type: string): Promise<string[]> {
 
   return resolvers.sort()
 }
+
+// Search all files for a certain regex pattern and returns the first match
+export async function searchInFiles(
+  fileGlob: string,
+  regex: RegExp,
+): Promise<{ filePath: string; position: number; endIndex: number } | null> {
+  const files = await vscode.workspace.findFiles(fileGlob)
+  for (const file of files) {
+    const content = await fs.promises.readFile(file.fsPath, "utf8")
+    const match = regex.exec(content)
+    if (match) {
+      return {
+        filePath: file.fsPath,
+        position: match.index,
+        endIndex: match.index + match[0].length,
+      }
+    }
+  }
+  return null
+}

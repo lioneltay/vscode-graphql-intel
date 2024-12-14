@@ -1,31 +1,24 @@
 import * as vscode from "vscode"
-import * as fs from "fs"
 
-import { getGraphqlFolder, getAllFieldsOfType, getTypeNames } from "../utils"
+import {
+  getGraphqlFolder,
+  getAllFieldsOfType,
+  getTypeNames,
+  searchInFiles,
+} from "../utils"
 
 // Function to search for the resolver in the resolvers folder
 async function searchResolverInFolder(
   baseType: string,
   fieldName: string,
 ): Promise<{ filePath: string; position: number; endIndex: number } | null> {
-  const folderPath = getGraphqlFolder()
-  const files = await vscode.workspace.findFiles(`${folderPath}/**/*.{ts,js}`)
-  for (const file of files) {
-    const content = await fs.promises.readFile(file.fsPath, "utf8")
-    const regex = new RegExp(
+  return searchInFiles(
+    `${getGraphqlFolder()}/**/*.{ts,js}`,
+    new RegExp(
       `${baseType}\\s*:\\s*{[\\s\\S]*?\\b${fieldName}\\b\\s*(?:\\:|,)`,
       "s",
-    )
-    const match = regex.exec(content)
-    if (match) {
-      return {
-        filePath: file.fsPath,
-        position: match.index,
-        endIndex: match.index + match[0].length,
-      }
-    }
-  }
-  return null
+    ),
+  )
 }
 
 async function showResolverInEditor(

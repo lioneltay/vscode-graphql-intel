@@ -1,32 +1,25 @@
 import * as vscode from "vscode"
 import * as fs from "fs"
 
-import { getGraphqlFolder, getAllFieldsOfType, getTypeNames } from "../utils"
+import {
+  getGraphqlFolder,
+  getAllFieldsOfType,
+  getTypeNames,
+  searchInFiles,
+} from "../utils"
 
 // Function to search for the field in the GQL files
 async function searchFieldInGqlFiles(
   typeName: string,
   fieldName: string,
 ): Promise<{ filePath: string; position: number; endIndex: number } | null> {
-  const gqlFiles = await vscode.workspace.findFiles(
+  return searchInFiles(
     `${getGraphqlFolder()}/**/*.gql`,
-  )
-  for (const file of gqlFiles) {
-    const content = await fs.promises.readFile(file.fsPath, "utf8")
-    const regex = new RegExp(
+    new RegExp(
       `(type|extend type)\\s+${typeName}\\s*{[\\s\\S]*?\\b${fieldName}\\b\\s*(?:\\(|\\:)`,
       "s",
-    )
-    const match = regex.exec(content)
-    if (match) {
-      return {
-        filePath: file.fsPath,
-        position: match.index,
-        endIndex: match.index + match[0].length,
-      }
-    }
-  }
-  return null
+    ),
+  )
 }
 
 async function showFieldInEditor(
