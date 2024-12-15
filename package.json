@@ -2,7 +2,7 @@
   "name": "graphql-intel",
   "publisher": "LionelTay",
   "displayName": "GraphQL Intel",
-  "description": "Find GraphQL files with ease",
+  "description": "GraphQL Intel is a Visual Studio Code extension that helps you navigate and find GraphQL files with ease. It provides commands to locate and open GraphQL types, fields, and resolvers in your codebase.",
   "icon": "graphql-intel.png",
   "repository": {
     "type": "git",
