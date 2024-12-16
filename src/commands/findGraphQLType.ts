@@ -1,11 +1,7 @@
 import * as vscode from "vscode"
 import * as fs from "fs"
 
-import {
-  getTypeNames,
-  initializeGetTypeNamesWatcher,
-  findFileWithType,
-} from "../utils"
+import { getTypeNames, findFileWithType } from "../utils"
 
 // Register the command to open a GraphQL type
 export function registerOpenGraphQLTypeCommand(
@@ -47,5 +43,4 @@ export function registerOpenGraphQLTypeCommand(
   )
 
   context.subscriptions.push(openGraphQLTypeCommand)
-  context.subscriptions.push(initializeGetTypeNamesWatcher())
 }

@@ -3,6 +3,8 @@ import { registerOpenGraphQLTypeCommand } from "./commands/findGraphQLType"
 import { registerFindGraphQLResolverCommand } from "./commands/findGraphQLResolver"
 import { registerFindGraphQLFieldCommand } from "./commands/findGraphQLField"
 
+import { initializeGetTypeNamesWatcher } from "./utils"
+
 // This method is called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
   // Register the command to open a GraphQL type
@@ -11,6 +13,8 @@ export function activate(context: vscode.ExtensionContext) {
   registerFindGraphQLResolverCommand(context)
   // Register the command to find a GraphQL field
   registerFindGraphQLFieldCommand(context)
+
+  context.subscriptions.push(initializeGetTypeNamesWatcher())
 }
 
 // This method is called when your extension is deactivated
