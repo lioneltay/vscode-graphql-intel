@@ -18,11 +18,13 @@ function readConfig(field: string) {
     "graphql-intel.config.json",
   )
 
+  const configFromFile = fs.existsSync(configPath)
+    ? JSON.parse(fs.readFileSync(configPath, "utf8"))
+    : undefined
+
   const config = {
     ...DEFAULT_CONFIG,
-    ...(!fs.existsSync(configPath)
-      ? JSON.parse(fs.readFileSync(configPath, "utf8"))
-      : undefined),
+    ...configFromFile,
   }
 
   return field
