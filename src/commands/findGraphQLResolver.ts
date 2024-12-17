@@ -2,9 +2,11 @@ import * as vscode from "vscode"
 
 import {
   getGraphqlFolder,
-  getAllFieldsOfType,
   getTypeNames,
   searchInFiles,
+  getFieldsOfType,
+  resolverCache,
+  initializeResolverCache,
 } from "../utils"
 
 // Function to search for the resolver in the resolvers folder
@@ -12,13 +14,23 @@ async function searchResolverInFolder(
   baseType: string,
   fieldName: string,
 ): Promise<{ filePath: string; position: number; endIndex: number } | null> {
-  return searchInFiles(
+  const cacheKey = `${baseType}:${fieldName}`
+  console.log("cacheKey", cacheKey)
+  if (resolverCache[cacheKey]) {
+    console.log("Cache hit")
+    return resolverCache[cacheKey]
+  }
+
+  const result = await searchInFiles(
     `${getGraphqlFolder()}/**/*.{ts,js}`,
     new RegExp(
       `${baseType}\\s*:\\s*{[\\s\\S]*?\\b(?:async\\s+)?${fieldName}\\b\\s*(?:\\(|\\:|,)`,
       "s",
     ),
   )
+
+  resolverCache[cacheKey] = result
+  return result
 }
 
 async function showResolverInEditor(
@@ -71,7 +83,7 @@ export function registerFindGraphQLResolverCommand(
 
       const finalType =
         resolverType === "Type"
-          ? await vscode.window.showQuickPick(getTypeNames(), {
+          ? await vscode.window.showQuickPick(await getTypeNames(), {
               placeHolder: "Select a GraphQL type",
             })
           : resolverType
@@ -80,9 +92,7 @@ export function registerFindGraphQLResolverCommand(
         return
       }
 
-      const typeFields = await getAllFieldsOfType(finalType)
-
-      console.log("typefields", typeFields)
+      const typeFields = await getFieldsOfType(finalType)
 
       const resolverName = await vscode.window.showQuickPick(typeFields, {
         placeHolder: `Select the GraphQL ${finalType} name`,

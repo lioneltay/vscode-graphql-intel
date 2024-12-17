@@ -3,9 +3,9 @@ import * as fs from "fs"
 
 import {
   getGraphqlFolder,
-  getAllFieldsOfType,
   getTypeNames,
   searchInFiles,
+  getFieldsOfType,
 } from "../utils"
 
 // Function to search for the field in the GQL files
@@ -75,7 +75,7 @@ export function registerFindGraphQLFieldCommand(
         return
       }
 
-      const typeFields = await getAllFieldsOfType(typeName)
+      const typeFields = await getFieldsOfType(typeName)
 
       const fieldName = await vscode.window.showQuickPick(typeFields, {
         placeHolder: `Select the field name for type ${typeName}`,
