@@ -51,8 +51,6 @@ export async function initializeResolverCache() {
       await parseAndCacheResolvers(file.fsPath)
     }),
   )
-
-  console.log(resolverCache)
 }
 
 // Function to update the resolver cache for a specific file

@@ -9,20 +9,6 @@ let fieldsCache: { [filePath: string]: { [typeName: string]: Set<string> } } =
   {}
 let cacheInitialized = false
 
-parseAndCacheContent(
-  "/Users/lioneltay/persuit/http-server/src/server/graphql/schemas/schema/mutation.gql",
-)
-  .then((res) =>
-    console.log(
-      "wee",
-      res,
-      fieldsCache[
-        "/Users/lioneltay/persuit/http-server/src/server/graphql/schemas/schema/mutation.gql"
-      ],
-    ),
-  )
-  .catch(console.error)
-
 // Function to parse content and update caches
 async function parseAndCacheContent(filePath: string) {
   const content = await fs.promises.readFile(filePath, "utf8")

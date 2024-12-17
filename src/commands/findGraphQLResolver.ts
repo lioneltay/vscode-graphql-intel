@@ -15,9 +15,7 @@ async function searchResolverInFolder(
   fieldName: string,
 ): Promise<{ filePath: string; position: number; endIndex: number } | null> {
   const cacheKey = `${baseType}:${fieldName}`
-  console.log("cacheKey", cacheKey)
   if (resolverCache[cacheKey]) {
-    console.log("Cache hit")
     return resolverCache[cacheKey]
   }
 
