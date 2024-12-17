@@ -5,7 +5,32 @@ import { getGraphqlFolder } from "../utils"
 
 // Cache to store GraphQL type names by file path
 let typeCache: { [filePath: string]: Set<string> } = {}
+let fieldsCache: { [filePath: string]: { [typeName: string]: Set<string> } } =
+  {}
 let cacheInitialized = false
+
+// Function to parse content and update caches
+async function parseAndCacheContent(filePath: string) {
+  const content = await fs.promises.readFile(filePath, "utf8")
+  const typeRegex = /type\s+(\w+)\s*{/g
+  let match
+  typeCache[filePath] = new Set<string>()
+  while ((match = typeRegex.exec(content)) !== null) {
+    typeCache[filePath].add(match[1])
+  }
+
+  const fieldRegex = /type\s+(\w+)\s*{([^}]*)}/g
+  fieldsCache[filePath] = {}
+  while ((match = fieldRegex.exec(content)) !== null) {
+    const typeName = match[1]
+    const fields = match[2]
+    fieldsCache[filePath][typeName] = new Set<string>()
+    const fieldNames = fields.match(/\b(\w+)\b\s*(?:\(|:)/g) || []
+    fieldNames.forEach((field) =>
+      fieldsCache[filePath][typeName].add(field.trim()),
+    )
+  }
+}
 
 // Function to initialize the cache by reading all .gql files in the workspace
 async function initializeCache() {
@@ -15,15 +40,7 @@ async function initializeCache() {
 
   await Promise.all(
     files.map(async (file) => {
-      const content = await fs.promises.readFile(file.fsPath, "utf8")
-      const regex = /^type\s+(\w+)\s+{/g
-      let match
-      while ((match = regex.exec(content)) !== null) {
-        if (!typeCache[file.fsPath]) {
-          typeCache[file.fsPath] = new Set<string>()
-        }
-        typeCache[file.fsPath].add(match[1])
-      }
+      await parseAndCacheContent(file.fsPath)
     }),
   )
 
@@ -32,13 +49,7 @@ async function initializeCache() {
 
 // Function to update the cache for a specific file
 async function updateCache(filePath: string) {
-  const content = await fs.promises.readFile(filePath, "utf8")
-  const regex = /^type\s+(\w+)\s+{/g
-  let match
-  typeCache[filePath] = new Set<string>()
-  while ((match = regex.exec(content)) !== null) {
-    typeCache[filePath].add(match[1])
-  }
+  await parseAndCacheContent(filePath)
 }
 
 // Function to get all unique type names from the cache
@@ -65,9 +76,17 @@ export async function findFileWithType(
 }
 
 export function initializeGetTypeNamesWatcher() {
-  const watcher = vscode.workspace.createFileSystemWatcher("**/*.gql")
+  const watcher = vscode.workspace.createFileSystemWatcher(
+    new vscode.RelativePattern(
+      vscode.workspace.workspaceFolders?.[0] ?? "",
+      `${getGraphqlFolder()}/**/*.gql`,
+    ),
+  )
   watcher.onDidChange((uri) => updateCache(uri.fsPath))
   watcher.onDidCreate((uri) => updateCache(uri.fsPath))
-  watcher.onDidDelete((uri) => delete typeCache[uri.fsPath])
+  watcher.onDidDelete((uri) => {
+    delete typeCache[uri.fsPath]
+    delete fieldsCache[uri.fsPath]
+  })
   return watcher
 }

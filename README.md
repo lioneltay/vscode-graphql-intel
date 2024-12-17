@@ -51,12 +51,12 @@ The extension reads the configuration from a `graphql-lens.config.json` file in 
 
 ```json
 {
-  "graphqlFolder": "src/",
+  "graphqlFolder": "src",
   "tabSize": 2
 }
 ```
 
-- `graphqlFolder`: The folder where your GraphQL files are located. The default value is `src/`.
+- `graphqlFolder`: The folder where your GraphQL files are located. The default value is `src`.
 - `tabSize`: The number of spaces used for indentation in your GraphQL files. The default value is `2`.
 
 ## Contributing

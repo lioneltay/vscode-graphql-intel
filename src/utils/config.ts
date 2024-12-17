@@ -3,7 +3,7 @@ import * as path from "path"
 import * as fs from "fs"
 
 const DEFAULT_CONFIG = {
-  graphqlFolder: "src/",
+  graphqlFolder: "src",
   tabSize: 2,
 }
 
@@ -32,6 +32,9 @@ function readConfig(field: string) {
     .reduce((o, i) => (o && typeof o === "object" ? o[i] : undefined), config)
 }
 
-export const getGraphqlFolder = (): string => readConfig("graphqlFolder")
+export const getGraphqlFolder = (): string => {
+  const folder = readConfig("graphqlFolder")
+  return folder.endsWith("/") ? folder.slice(0, -1) : folder
+}
 
 export const getTabSize = (): number => readConfig("tabSize")
