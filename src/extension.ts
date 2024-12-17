@@ -16,7 +16,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Initialize caches
   await initializeCache()
-  await initializeResolverCache()
+  // await initializeResolverCache()
 
   // Register the command to open a GraphQL type
   registerOpenGraphQLTypeCommand(context)
@@ -27,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Initialize watchers to update caches on file changes
   context.subscriptions.push(initializeGetTypeNamesWatcher())
-  context.subscriptions.push(initializeResolverCacheWatcher())
+  // context.subscriptions.push(initializeResolverCacheWatcher())
 }
 
 // This method is called when your extension is deactivated

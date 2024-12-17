@@ -14,10 +14,10 @@ async function searchResolverInFolder(
   baseType: string,
   fieldName: string,
 ): Promise<{ filePath: string; position: number; endIndex: number } | null> {
-  const cacheKey = `${baseType}:${fieldName}`
-  if (resolverCache[cacheKey]) {
-    return resolverCache[cacheKey]
-  }
+  // const cacheKey = `${baseType}:${fieldName}`
+  // if (resolverCache[cacheKey]) {
+  //   return resolverCache[cacheKey]
+  // }
 
   const result = await searchInFiles(
     `${getGraphqlFolder()}/**/*.{ts,js}`,
@@ -27,7 +27,7 @@ async function searchResolverInFolder(
     ),
   )
 
-  resolverCache[cacheKey] = result
+  // resolverCache[cacheKey] = result
   return result
 }
 
